@@ -25,7 +25,7 @@ This method is a **mixed multi-layer attack** combining **asynchronous HTTPS flo
 - For socket flooding, it opens raw connections and floods the target with customized HTTP requests through proxies.
 
 This method is powerful, flexible, and designed to stress-test web servers using a combination of high-concurrency HTTPS requests and raw socket-level floods.
-"""
+
 
 ### Install the requirements
 ```
