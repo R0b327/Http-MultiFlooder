@@ -24,3 +24,14 @@ This method is a **mixed multi-layer attack** combining **asynchronous HTTPS flo
 
 This method is powerful, flexible, and designed to stress-test web servers using a combination of high-concurrency HTTPS requests and raw socket-level floods.
 """
+
+### Install the requirements
+```
+pip install -r requirements.txt
+```
+### Usage
+```
+python start.py <target> <port> <threads> <proxyfile>
+```
+- Example: python start.py https://website.com 443 6 proxy.txt
+- Good proxies more power, recommend 4c or 8c Server
