@@ -35,5 +35,5 @@ pip install -r requirements.txt
 ```
 python start.py <target> <port> <threads> <proxyfile>
 ```
-- Example: python start.py https://website.com 443 6 proxy.txt
+- Example: python start.py https://website.com 443 6 socks5.txt
 - Good proxies more power, recommend VPS 4cores or 8cores
