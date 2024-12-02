@@ -34,4 +34,4 @@ pip install -r requirements.txt
 python start.py <target> <port> <threads> <proxyfile>
 ```
 - Example: python start.py https://website.com 443 6 proxy.txt
-- Good proxies more power, recommend 4c or 8c Server
+- Good proxies more power, recommend VPS 4cores or 8cores
